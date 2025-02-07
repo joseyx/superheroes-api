@@ -1,99 +1,117 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Superhero API
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+The Superhero API is a simple NestJS application that allows you to manage superheroes. You can create superheroes, list them, and delete them. The API uses in-memory storage (an array) for simplicity.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Installation
 
-## Description
+1. Clone the repository.
+2. Navigate to the project directory.
+3. Install dependencies by running:
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+   ```bash
+   npm install
+   ```
 
-## Project setup
+4. Start the application in development mode:
 
-```bash
-$ npm install
+   ```bash
+   npm run start:dev
+   ```
+
+5. The application will be available at [http://localhost:3000](http://localhost:3000).
+
+## File Structure
+
+```
+superhero-api/
+├── src/
+│   ├── app.controller.ts       // Basic App controller
+│   ├── app.controller.spec.ts  // Tests for App controller
+│   ├── app.module.ts           // App root module
+│   ├── app.service.ts          // Basic App service
+│   ├── main.ts                 // Entry point of the application; sets up validation and Swagger
+│   └── superheroes/            // Superheroes feature
+│       ├── dto/
+│       │   ├── create-superhero.dto.ts       // DTO to create a superhero with validation
+│       │   ├── error-response.dto.ts           // DTOs for error responses for create and delete endpoints
+│       │   └── superhero-response.dto.ts       // DTO for the superhero response (201)
+│       ├── heroes.controller.ts  // Controller for superhero endpoints
+│       ├── heroes.controller.spec.ts  // Unit tests for superhero controller
+│       ├── heroes.module.ts      // Module for superheroes feature
+│       ├── heroes.service.ts     // In-memory storage and business logic for superheroes
+│       └── interfaces/
+│           └── superhero.interface.ts  // Interface defining the Superhero object
+├── test/
+│   └── app.e2e-spec.ts         // End-to-end tests for the API
+├── package.json                // Project metadata and scripts
+├── tsconfig.json               // TypeScript configuration
+├── tsconfig.build.json         // Build-related TypeScript configuration
+├── nest-cli.json               // Nest CLI configuration
+├── eslint.config.mjs           // ESLint configuration
+├── .prettierrc                 // Prettier configuration
+└── README.md                   // This file
 ```
 
-## Compile and run the project
+## Endpoints
+
+### GET /superheroes
+
+- **Description:** Retrieves all superheroes stored in the system, sorted by 
+humilityScore
+in descending order.
+- **Response (200):**
+  - A JSON array of superhero objects.
+  - Each superhero has:
+    - id: Unique identifier.
+    - name: The superhero's name.
+    - power: The superhero's power.
+    - humilityScore: A numeric score between 1 and 10.
+
+### POST /superheroes
+
+- **Description:** Creates a new superhero with the specified properties.
+- **Request Body:**  
+  The request body must be a JSON object following the structure defined in the CreateSuperheroDto, for example:
+  ```json
+  {
+    "name": "Superman",
+    "power": "Flying",
+    "humilityScore": 10
+  }
+  ```
+- **Validation:**
+  - `name` and `power`must be non-empty strings.
+  - `humilityScore` must be an integer between 1 and 10.
+- **Response (201):**
+  - The newly created superhero object following the 
+SuperheroResponseDto
+structure.
+- **Response (400):**
+  - A structured error response if the input validation fails.
+
+### DELETE /superheroes
+
+- **Description:** Deletes a superhero by its unique ID provided as a query parameter.
+- **Query Parameter:**
+  - id: The ID of the superhero to delete. This parameter is required.
+- **Response (200):**
+  - A confirmation message stating that the superhero has been successfully deleted.
+- **Response (500):**
+  - A structured error response if the id is not provided or if something goes wrong.
+
+## Swagger Documentation
+
+Once the application is running, you can access the Swagger UI at [http://localhost:3000/docs](http://localhost:3000/docs). Swagger provides a detailed description of each endpoint, the expected request parameters, and response models.
+
+## Running Tests
+
+Unit tests are written using Jest. To run the tests, execute:
 
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+npm run test
 ```
 
-## Run tests
 
-```bash
-# unit tests
-$ npm run test
+## Summary
 
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
-```
-
-## Deployment
-
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
-```bash
-$ npm install -g mau
-$ mau deploy
-```
-
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
-
-## Resources
-
-Check out a few resources that may come in handy when working with NestJS:
-
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+The Superhero API is a straightforward demonstration of using NestJS to build RESTful endpoints with proper validation and Swagger documentation. The project is structured to separate concerns, making it easier to manage and scale.
