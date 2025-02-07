@@ -12,7 +12,7 @@ export class ErrorCreateSupeResponseDto {
 }
 
 export class ErrorDeleteSupeResponseDto {
-  @ApiProperty({ example: 400 })
+  @ApiProperty({ example: 500 })
   statusCode: number;
 
   @ApiProperty({ example: 'Bad Request' })
