@@ -8,9 +8,9 @@ export class SuperheroesService {
   private superheroes: Superhero[] = [];
   private idCounter = 1; // To assign unique IDs to each superhero
 
-  // Get all superheroes order by humillityScore in descending order
+  // Get all superheroes order by humilityScore in descending order
   findAll(): Superhero[] {
-    return this.superheroes.sort((a, b) => b.humillityScore - a.humillityScore);
+    return this.superheroes.sort((a, b) => b.humilityScore - a.humilityScore);
   }
 
   // Create and store a new superhero

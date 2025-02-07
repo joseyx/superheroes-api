@@ -12,5 +12,5 @@ export class CreateSuperheroDto {
   @IsInt()
   @Min(1)
   @Max(10)
-  readonly humillityScore: number;
+  readonly humilityScore: number;
 }

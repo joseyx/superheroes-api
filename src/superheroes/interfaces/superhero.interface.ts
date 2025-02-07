@@ -3,5 +3,5 @@ export interface Superhero {
   id: number;
   name: string;
   power: string;
-  humillityScore: number;
+  humilityScore: number;
 }
