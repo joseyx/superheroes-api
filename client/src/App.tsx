@@ -37,16 +37,17 @@ function App() {
     setHumilityScore(0);
   };
 
+  const fetchHeroes = async () => {
+    try {
+      const heroes = await getSuperheroes();
+      setSuperheroes(heroes);
+    } catch (error) {
+      console.error('Error fetching superheroes', error);
+    }
+  };
+
   // Fetch superheroes on component mount
   useEffect(() => {
-    const fetchHeroes = async () => {
-      try {
-        const heroes = await getSuperheroes();
-        setSuperheroes(heroes);
-      } catch (error) {
-        console.error('Error fetching superheroes', error);
-      }
-    };
     fetchHeroes();
   }, []);
 
@@ -60,14 +61,26 @@ function App() {
       return;
     }
     try {
-      const newHero = await createSuperhero({
+      await createSuperhero({
         name: heroName,
         power: heroPower,
         humilityScore,
       });
-      setSuperheroes([...superheroes, newHero]);
+      fetchHeroes();
       handleCloseModal();
-    } catch (error) {
+    } catch (error: any) {
+      // Examine the error response from the API
+      const errorResponse = error.response?.data;
+      let errorMessage = 'Unknown error';
+      if (errorResponse) {
+        const { message } = errorResponse;
+        if (Array.isArray(message)) {
+          errorMessage = message.join(', ');
+        } else if (typeof message === 'string') {
+          errorMessage = message;
+        }
+      }
+      alert(`Error creating superhero: ${errorMessage}`);
       console.error('Error creating superhero', error);
     }
   };
@@ -161,6 +174,7 @@ function App() {
               value={heroName}
               onChange={(e) => setHeroName(e.target.value)}
               fullWidth
+              required
             />
             <TextField
               margin="dense"
@@ -169,6 +183,7 @@ function App() {
               value={heroPower}
               onChange={(e) => setHeroPower(e.target.value)}
               fullWidth
+              required
             />
             <TextField
               margin="dense"
